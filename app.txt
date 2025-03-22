@@ -1,0 +1,39 @@
+from flask import Flask, render_template, request
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+
+# Case duration and cost estimation logic
+CASE_DURATIONS = {
+    "Civil": {"District": 365, "High Court": 730, "Supreme Court": 1095},
+    "Criminal": {"District": 540, "High Court": 1080, "Supreme Court": 1825}
+}
+
+CASE_COSTS = {
+    "Civil": {"District": 20000, "High Court": 50000, "Supreme Court": 100000},
+    "Criminal": {"District": 30000, "High Court": 70000, "Supreme Court": 150000}
+}
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    case_type = request.form['case_type']
+    court_level = request.form['court_level']
+    filing_date = request.form['filing_date']
+
+    # Debugging: Print values in the terminal
+    print(f"Received: {case_type}, {court_level}, {filing_date}")
+
+    # Calculate the predicted date (Make sure this function works)
+    predicted_date = calculate_predicted_date(case_type, court_level, filing_date)
+    
+    # Calculate the cost (Make sure this function works)
+    predicted_cost = calculate_case_cost(case_type, court_level)
+
+    # Debugging: Print the calculated values
+    print(f"Predicted Date: {predicted_date}, Predicted Cost: {predicted_cost}")
+
+    return render_template('index.html', predicted_date=predicted_date, predicted_cost=predicted_cost)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
